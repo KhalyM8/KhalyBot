@@ -1,12 +1,24 @@
 import discord
+from discord.ext import commands
+from github import Github
+from dotenv import load_dotenv
+import os
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print('Logged on as {0}!'.format(self.user))
+load_dotenv("tokens.env")
 
-    async def on_message(self, message):
-        print('Message from {0.author}: {0.content}'.format(message))
-        await message.channel.send("content")
+GClient = Github(os.getenv("GITHUB_TOKEN"))
 
-client = MyClient()
-client.run('OTgyNTU1NzIyMzQyNjA4OTc3.GdblAe.yfMu4K6Bv6vxBSho6rO0bKwjKLl4ArpQSOIbi8')
+client = commands.Bot(command_prefix='!')
+
+@client.event
+async def on_ready():
+    print('Bot is Online')
+
+@client.command()
+async def listRepos(ctx,arg):
+    user = GClient.get_user(arg)
+    for repo in user.get_repos():
+        await ctx.send(repo.full_name)
+        await ctx.send("https://github.com/"+ repo.full_name)
+
+client.run(os.getenv("DISCORD_TOKEN"))

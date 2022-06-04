@@ -1,1 +1,5 @@
 /.vscode
+Token.txt
+DiscordToken.txt
+tokens.env
+.gitignore
